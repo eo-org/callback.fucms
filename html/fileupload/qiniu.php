@@ -37,13 +37,13 @@ $m = new MongoClient($host, array(
 	'db' => 'admin')
 );
 
-$origin = $_GET['origin'];
+$origin = $_POST['origin'];
 if($origin == 'developer') {
 	$dbName = 'cms_test';
 } else {
-	$websiteId = $_GET['websiteId'];
-	$ownerId = $_GET['ownerId'];
-	$groupId = $_GET['groupId'];
+	$websiteId = $_POST['websiteId'];
+	$ownerId = $_POST['ownerId'];
+	$groupId = $_POST['groupId'];
 	
 	$db = $m->selectDb('account_fucms');
 	$siteArr = $db->website->findOne(array('_id' => $websiteId));
@@ -69,7 +69,7 @@ if($origin == 'developer') {
 			'db' => 'admin')
 	);
 	
-	$filetype = $_GET['filetype'];
+	$filetype = $_POST['filetype'];
 	$isImage = false;
 	if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
 		$isImage = true;
@@ -82,11 +82,11 @@ $db = $m->selectDb($dbName);
 $file = $db->file->insert(array(
 	'ownerId' => $ownerId,
 	'groupId' => $groupId,
-	'filename' => $_GET['filename'],
-	'urlname' => $_GET['urlname'],
-	'size' => $_GET['size'],
+	'filename' => $_POST['filename'],
+	'urlname' => $_POST['urlname'],
+	'size' => $_POST['size'],
 	'storage' => 'qiniu',
 	'filetype' => $filetype,
 	'isImage' => $isImage
 ));
-echo '{"success":true,"name":"'.$_GET['filename'].'"}';
+echo '{"success":true,"name":"'.$_POST['filename'].'"}';
