@@ -7,17 +7,17 @@ function isQiniuCallback() {
 		return false;
 	}
 	$auth = explode(":",$substr($authstr,5));
-	if(sizeof($auth)!=2 || $auth[0]!=C('accessKey')){
-		return false;
-	}
+// 	if(sizeof($auth)!=2 || $auth[0]!=C('accessKey')){
+// 		return false;
+// 	}
 	$data = "/qiniu.php\n".file_get_contents('php://input');
 	return true;
 	//return URLSafeBase64Encode(hash_hmac('sha1',$data,C("secretKey"), true)) == $auth[1];
 }
 
 if(!isQiniuCallback()) {
-	//echo '{"success": false}';
-	//exit(1);
+	echo '{"success": false}';
+	exit(1);
 }
 
 define("BASE_PATH", $localConfig['env']['base_path']);
