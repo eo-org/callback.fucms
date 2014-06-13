@@ -40,20 +40,19 @@ $m = new MongoClient($host, array(
 	'db' => 'admin')
 );
 
-$s = "";
-foreach($_POST as $k => $v) {
-	$s.= $k.':'.$v.',';
-}
-throw new Exception($s);
-
 $origin = $_POST['origin'];
+$websiteId = $_POST['websiteId'];
+$ownerId = $_POST['ownerId'];
+$groupId = $_POST['groupId'];
+$filetype = $_POST['filetype'];
+$isImage = false;
+if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
+	$isImage = true;
+}
+
 if($origin == 'developer') {
 	$dbName = 'cms_test';
 } else {
-	$websiteId = $_POST['websiteId'];
-	$ownerId = $_POST['ownerId'];
-	$groupId = $_POST['groupId'];
-	
 	$db = $m->selectDb('account_fucms');
 	$siteArr = $db->website->findOne(array('_id' => $websiteId));
 	
@@ -77,12 +76,6 @@ if($origin == 'developer') {
 			'password' => $password,
 			'db' => 'admin')
 	);
-	
-	$filetype = $_POST['filetype'];
-	$isImage = false;
-	if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
-		$isImage = true;
-	}
 	
 	$dbName = 'cms_'.$siteArr['globalSiteId'];
 }
