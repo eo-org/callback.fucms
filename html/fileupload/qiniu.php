@@ -2,10 +2,13 @@
 $localConfig = include '../../config/local.php';
 
 function isQiniuCallback() {
-	$authstr = $_SERVER['HTTP_AUTHORIZATION'];
-	if(empty($authstr)) {
+	$h = apache_request_headers();
+	if(isset($h['Authorization']) && !empty($h['Authorization'])) {
+		$authstr = $h['Authorization'];
+	} else {
 		return false;
 	}
+
 	if(strpos($authstr,"QBox ") != 0) {
 		return false;
 	}
