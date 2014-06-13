@@ -13,6 +13,9 @@ function isQiniuCallback() {
 		return false;
 	}
 	$auth = explode(":", substr($authstr,5));
+	if(sizeof($auth)!=2) {
+		return false;
+	}
 // 	if(sizeof($auth)!=2 || $auth[0]!=C('accessKey')){
 // 		return false;
 // 	}
@@ -36,6 +39,12 @@ $m = new MongoClient($host, array(
 	'password' => $password,
 	'db' => 'admin')
 );
+
+$s = "";
+foreach($_POST as $k => $v) {
+	$s.= $k.':'.$v.',';
+}
+throw new Exception($s);
 
 $origin = $_POST['origin'];
 if($origin == 'developer') {
