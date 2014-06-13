@@ -34,41 +34,47 @@ $m = new MongoClient($host, array(
 	'db' => 'admin')
 );
 
-$websiteId = $_GET['websiteId'];
-$ownerId = $_GET['ownerId'];
-$groupId = $_GET['groupId'];
-
-$db = $m->selectDb('account_fucms');
-$siteArr = $db->website->findOne(array('_id' => $websiteId));
-
-if(is_null($siteArr)) {
-	echo "not-found";
-	exit(0);
+$origin = $_GET['origin'];
+if($origin == 'developer') {
+	$dbName = 'cms_test';
+} else {
+	$websiteId = $_GET['websiteId'];
+	$ownerId = $_GET['ownerId'];
+	$groupId = $_GET['groupId'];
+	
+	$db = $m->selectDb('account_fucms');
+	$siteArr = $db->website->findOne(array('_id' => $websiteId));
+	
+	if(is_null($siteArr)) {
+		echo "not-found";
+		exit(0);
+	}
+	if(!$siteArr['active']) {
+		echo "expired";
+		exit(0);
+	}
+	
+	$server = $db->server->findOne(array('_id' => $siteArr['server']['$id']));
+	$internalIpAddress = $server['internalIpAddress'];
+	
+	$host		= $server['internalIpAddress'];
+	$username	= $server['user'];
+	$password	= $server['pass'];
+	$m = new MongoClient($host, array(
+			'username' => $username,
+			'password' => $password,
+			'db' => 'admin')
+	);
+	
+	$filetype = $_GET['filetype'];
+	$isImage = false;
+	if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
+		$isImage = true;
+	}
+	
+	$dbName = 'cms_'.$siteArr['globalSiteId'];
 }
-if(!$siteArr['active']) {
-	echo "expired";
-	exit(0);
-}
 
-$server = $db->server->findOne(array('_id' => $siteArr['server']['$id']));
-$internalIpAddress = $server['internalIpAddress'];
-
-$host		= $server['internalIpAddress'];
-$username	= $server['user'];
-$password	= $server['pass'];
-$m = new MongoClient($host, array(
-		'username' => $username,
-		'password' => $password,
-		'db' => 'admin')
-);
-
-$filetype = $_GET['filetype'];
-$isImage = false;
-if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
-	$isImage = true;
-}
-
-$dbName = 'cms_'.$siteArr['globalSiteId'];
 $db = $m->selectDb($dbName);
 $file = $db->file->insert(array(
 	'ownerId' => $ownerId,
