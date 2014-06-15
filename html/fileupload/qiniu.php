@@ -25,7 +25,7 @@ function isQiniuCallback() {
 }
 
 if(!isQiniuCallback()) {
-	echo '{"success": false}';
+	echo '{"success": false, "error": "callback orgin error"}';
 	exit(1);
 }
 
@@ -34,6 +34,7 @@ define("BASE_PATH", $localConfig['env']['base_path']);
 $host		= $localConfig['env']['account_fucms_db']['host'];
 $username	= $localConfig['env']['account_fucms_db']['username'];
 $password	= $localConfig['env']['account_fucms_db']['password'];
+
 $m = new MongoClient($host, array(
 	'username' => $username,
 	'password' => $password,
@@ -57,7 +58,7 @@ if($origin == 'developer') {
 	$dbName = 'cms_test';
 } else {
 	$db = $m->selectDb('account_fucms');
-	$siteArr = $db->website->findOne(array('_id' => $websiteId));
+	$siteArr = $db->website->findOne(array('_id' => new MongoId($websiteId)));
 	
 	if(is_null($siteArr)) {
 		echo '{"success": false, "error": "site not-found"}';
@@ -68,7 +69,7 @@ if($origin == 'developer') {
 		exit(0);
 	}
 	
-	$server = $db->server->findOne(array('_id' => $siteArr['server']['$id']));
+	$server = $db->server->findOne(array('_id' => new MongoId($siteArr['server']['$id'])));
 	$internalIpAddress = $server['internalIpAddress'];
 	
 	$host		= $server['internalIpAddress'];
