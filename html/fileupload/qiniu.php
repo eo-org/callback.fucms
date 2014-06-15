@@ -44,9 +44,11 @@ $origin = $_POST['origin'];
 $websiteId = $_POST['websiteId'];
 $ownerId = $_POST['ownerId'];
 $groupId = $_POST['groupId'];
+$filename = $_POST['filename'],
+$urlname = $_POST['urlname'],
 $filetype = $_POST['filetype'];
 $isImage = false;
-if(in_array($fileType, array('image/jpeg', 'image/gif', 'image/png'))) {
+if(in_array($filetype, array('image/jpeg', 'image/gif', 'image/png'))) {
 	$isImage = true;
 }
 
@@ -57,11 +59,11 @@ if($origin == 'developer') {
 	$siteArr = $db->website->findOne(array('_id' => $websiteId));
 	
 	if(is_null($siteArr)) {
-		echo "not-found";
+		echo '{"success": false, "error": "site not-found"}';
 		exit(0);
 	}
 	if(!$siteArr['active']) {
-		echo "expired";
+		echo '{"success": false, "error": "site expired"}';
 		exit(0);
 	}
 	
