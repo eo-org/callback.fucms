@@ -44,8 +44,8 @@ $origin = $_POST['origin'];
 $websiteId = $_POST['websiteId'];
 $ownerId = $_POST['ownerId'];
 $groupId = $_POST['groupId'];
-$filename = $_POST['filename'],
-$urlname = $_POST['urlname'],
+$filename = $_POST['filename'];
+$urlname = $_POST['urlname'];
 $filetype = $_POST['filetype'];
 $isImage = false;
 if(in_array($filetype, array('image/jpeg', 'image/gif', 'image/png'))) {
