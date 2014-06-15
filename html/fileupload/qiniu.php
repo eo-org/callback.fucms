@@ -19,7 +19,7 @@ function isQiniuCallback() {
 // 	if(sizeof($auth)!=2 || $auth[0]!=C('accessKey')){
 // 		return false;
 // 	}
-	$data = "/qiniu.php\n".file_get_contents('php://input');
+	$data = "/fileupload/qiniu.php\n".file_get_contents('php://input');
 	return true;
 	//return URLSafeBase64Encode(hash_hmac('sha1',$data,C("secretKey"), true)) == $auth[1];
 }
@@ -44,8 +44,9 @@ $origin = $_POST['origin'];
 $websiteId = $_POST['websiteId'];
 $ownerId = $_POST['ownerId'];
 $groupId = $_POST['groupId'];
-$filename = $_POST['filename'];
 $urlname = $_POST['urlname'];
+$urlnameArr = explode('/', $urlname);
+$urlname = $urlnameArr[1];
 $filetype = $_POST['filetype'];
 $isImage = false;
 if(in_array($filetype, array('image/jpeg', 'image/gif', 'image/png'))) {
@@ -83,14 +84,16 @@ if($origin == 'developer') {
 }
 
 $db = $m->selectDb($dbName);
-$file = $db->file->insert(array(
-	'ownerId' => $ownerId,
-	'groupId' => $groupId,
-	'filename' => $_POST['filename'],
-	'urlname' => $_POST['urlname'],
-	'size' => $_POST['size'],
-	'storage' => 'qiniu',
-	'filetype' => $filetype,
-	'isImage' => $isImage
-));
+$file = $db->file->update(
+	array("urlname" => $urlname),
+	array('$set' => array(
+		'ownerId' => $ownerId,
+		'groupId' => $groupId,
+		'size' => $_POST['size'],
+		'urlname' => $urlname,
+		'filetype' => $filetype,
+		'isImage' => $isImage,
+		'status' => 'uploaded'
+	))
+);
 echo '{"success":true,"name":"'.$_POST['filename'].'"}';
